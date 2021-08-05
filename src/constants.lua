@@ -7,8 +7,7 @@ VIRTUAL_HEIGHT = 243
 PADDLE_SPEED = 200
 
 MAIN_MENU = {
-    {text = "START", state = 'play'},
-    {text = "HIGH SCORES", state = 'scores'},
+    {text = "START", state = 'play'}, {text = "HIGH SCORES", state = 'scores'},
     {text = "CREDITS", state = 'credits'}
 }
 
@@ -29,6 +28,19 @@ PADDLES_DATA = {
         {x = 96, y = 128, width = 96, height = 16},
         {x = 0, y = 144, width = 128, height = 16}
     }
+}
+
+BALLS_DATA = {
+    {
+        {x = 96, y = 48, width = 8, height = 8},
+        {x = 104, y = 48, width = 8, height = 8},
+        {x = 112, y = 48, width = 8, height = 8},
+        {x = 120, y = 48, width = 8, height = 8},
+        {x = 96, y = 56, width = 8, height = 8},
+        {x = 104, y = 56, width = 8, height = 8},
+        {x = 112, y = 56, width = 8, height = 8}
+    }
+
 }
 
 COLLORS = {

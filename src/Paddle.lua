@@ -2,14 +2,14 @@ Class = require 'lib/class'
 
 Paddle = Class{}
 
-function Paddle:init()
+function Paddle:init(skin, size)
     self.x = VIRTUAL_WIDTH / 2 - 32
     self.y = VIRTUAL_HEIGHT - 32
     self.dx = 0
     self.width = 64
     self.height = 16
-    self.skin = 1
-    self.size = 2
+    self.skin = skin
+    self.size = size
 end
 
 function Paddle:update(dt)
