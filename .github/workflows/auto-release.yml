@@ -1,0 +1,68 @@
+name: Automatic Release on Push
+on:
+  push:
+    branches:
+      - "main"
+jobs:
+  Release:
+    runs-on: ubuntu-latest
+    steps:      
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'      
+      - name: Generate .love file
+        run: zip -9 -r arkanedroid.love . -x '*.git*' -x '*.vscode*' -x '*.github*'
+      - uses: suisei-cn/actions-download-file@v1
+        id: lovebinswin64
+        name: Download Love2D Binaries for windows
+        with:
+          url: "https://github.com/love2d/love/releases/download/11.3/love-11.3-win64.zip"                
+      - name: Generating Binaries for win64
+        run: |
+          unzip love-11.3-win64
+          cp arkanedroid.love love-11.3-win64
+          cat love-11.3-win64/love.exe love-11.3-win64/arkanedroid.love > love-11.3-win64/arkanedroid.exe
+          mv love-11.3-win64/ win64/
+          rm -rf win64/*.ico
+          rm -rf win64/lov*.exe          
+          rm -rf win64/*.ico      
+          rm -rf win64/*.love
+      - uses: suisei-cn/actions-download-file@v1
+        id: lovebinsmacos
+        name: Download Love2D Binaries for mac
+        with:
+          url: "https://github.com/love2d/love/releases/download/11.3/love-11.3-macos.zip"                
+      - name: Generating Binaries for macos
+        run: |
+          unzip love-11.3-macos
+          mv love.app arkanedroid.app
+          cp arkanedroid.love arkanedroid.app/Contents/Resources/arkanedroid.love
+          sed -i 's/<string>org\.love2d\.love<\/string>/<string>io\.github\.paulushcgcj\.arkanedroid<\/string>/' arkanedroid.app/Contents/Info.plist
+          sed -i 's/<string>LÖVE<\/string>/<string>ArkaneDroid by Paulo<\/string>/' arkanedroid.app/Contents/Info.plist
+          head -n 103 arkanedroid.app/Contents/Info.plist >> arkanedroid.app/Contents/Info.plist.bkp
+          tail -n 2 arkanedroid.app/Contents/Info.plist >> arkanedroid.app/Contents/Info.plist.bkp
+          rm -rf arkanedroid.app/Contents/Info.plist
+          mv arkanedroid.app/Contents/Info.plist.bkp arkanedroid.app/Contents/Info.plist
+          zip -r -y arkanedroid.dmg arkanedroid.app
+      - name: Bump version and push tag
+        id: tag_bump
+        uses: anothrNick/github-tag-action@1.26.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_BRANCHES: main
+          INITIAL_VERSION: 1.0.0
+          WITH_V: true
+      - name: Preparing Files to Upload
+        run: |
+            zip -r -y -9 arkanedroid-${{ steps.tag_bump.outputs.new_tag }}-win64.zip win64/
+            mv arkanedroid.dmg arkanedroid-${{ steps.tag_bump.outputs.new_tag }}.dmg
+            mv arkanedroid.love arkanedroid-${{ steps.tag_bump.outputs.new_tag }}.love
+      - uses: meeDamian/github-release@2.0
+        name: Updating Release with artifact
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.tag_bump.outputs.new_tag }}
+          files: >            
+            arkanedroid-${{ steps.tag_bump.outputs.new_tag }}-win64.zip
+            arkanedroid-${{ steps.tag_bump.outputs.new_tag }}.dmg
+            arkanedroid-${{ steps.tag_bump.outputs.new_tag }}.love
