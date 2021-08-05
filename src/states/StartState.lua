@@ -5,9 +5,14 @@ StartState = Class{__includes = BaseState}
 
 local highlighted = 1
 
-function StartState:init()
-    self.maxMenuEntries = 2
-    self.menuEntries = {"START","HIGH SCORES"}
+function StartState:init(menuEntries)
+    self.maxMenuEntries = 1
+    self.menuEntries = menuEntries
+
+    for index, _ in pairs(self.menuEntries) do
+        self.maxMenuEntries = index
+    end
+
 end
 
 function StartState:update(dt)
@@ -27,7 +32,11 @@ function StartState:update(dt)
             highlighted = self.maxMenuEntries
         end
         gSounds['paddle-hit']:play()
-        print('Highlighted as '..tostring(highlighted))
+    end
+
+    if love.keyboard.wasPressed('enter') or love.keyboard.wasPressed('return') then
+        gSounds['confirm']:play()
+        gStateMachine:change(self.menuEntries[highlighted].state)
     end
 
     if love.keyboard.wasPressed('escape') then
@@ -37,7 +46,7 @@ end
 
 function StartState:render()
 
-    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.setColor(COLLORS['gametitle'])
     love.graphics.setFont(gFonts['large'])
     love.graphics.printf("ARKANEDROID", 0, 10, VIRTUAL_WIDTH, 'center')
 
@@ -48,13 +57,13 @@ function StartState:render()
     for index, entry in pairs(self.menuEntries) do
 
         if highlighted == index then
-            love.graphics.setColor(0.45, 1, 1, 1)
+            love.graphics.setColor(COLLORS['other'])
         else
-            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.setColor(COLLORS['white'])
         end
 
         love.graphics.printf(
-            tostring(entry),
+            tostring(entry.text),
             0,
             VIRTUAL_HEIGHT / 2 + positionVal + (20 * (index - 1)),
             VIRTUAL_WIDTH,
@@ -63,5 +72,5 @@ function StartState:render()
 
     end
 
-    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.setColor(COLLORS['white'])
 end

@@ -8,7 +8,11 @@ function love.load()
     gFonts = {
         ['small'] = love.graphics.newFont('assets/fonts/PressStart2P-Regular.ttf', 8),
         ['medium'] = love.graphics.newFont('assets/fonts/PressStart2P-Regular.ttf', 16),
-        ['large'] = love.graphics.newFont('assets/fonts/PressStart2P-Regular.ttf', 32)
+        ['large'] = love.graphics.newFont('assets/fonts/PressStart2P-Regular.ttf', 32),
+
+        ['small_secondary'] = love.graphics.newFont('assets/fonts/GamePlayed.ttf', 12),
+        ['medium_secondary'] = love.graphics.newFont('assets/fonts/GamePlayed.ttf', 18),
+        ['large_secondary'] = love.graphics.newFont('assets/fonts/GamePlayed.ttf', 32)
     }
     love.graphics.setFont(gFonts['small'])
 
@@ -18,6 +22,10 @@ function love.load()
         ['arrows'] = love.graphics.newImage('assets/graphics/arrows.png'),
         ['hearts'] = love.graphics.newImage('assets/graphics/hearts.png'),
         ['particle'] = love.graphics.newImage('assets/graphics/particle.png')
+    }
+
+    gFrames = {
+        ['paddles'] = getQuad(gTextures['main'],PADDLES_DATA)
     }
 
     push:setupScreen(VIRTUAL_WIDTH,VIRTUAL_HEIGHT,WINDOW_WIDTH,WINDOW_HEIGHT,{
@@ -46,7 +54,10 @@ function love.load()
     }
 
     gStateMachine = StateMachine {
-        ['start'] = function() return StartState() end
+        ['start'] = function() return StartState(MAIN_MENU) end,
+        ['play'] = function() return PlayState() end,
+        ['scores'] = function() return HighScoreState() end,
+        ['credits'] = function() return CreditsState() end,
     }
     gStateMachine:change('start')
 
