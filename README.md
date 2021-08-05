@@ -1,3 +1,3 @@
-# Pong @ CS50G
+# Arkanoid @ CS50G
 
-This is a sample game based on PONG developed during CS50G classes
+This is a sample game based on Arkanoid developed during CS50G classes
